@@ -22,9 +22,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/pkg/api"
 
-	//"github.com/fission/fission"
 	"github.com/fission/fission/tpr"
 )
 
@@ -161,7 +159,7 @@ func (mqt *MessageQueueTriggerManager) delTrigger(m *metav1.ObjectMeta) {
 func (mqt *MessageQueueTriggerManager) syncTriggers() {
 	for {
 		// get new set of triggers
-		newTriggers, err := mqt.fissionClient.Messagequeuetriggers(api.NamespaceAll).List(metav1.ListOptions{})
+		newTriggers, err := mqt.fissionClient.Messagequeuetriggers(metav1.NamespaceAll).List(metav1.ListOptions{})
 		if err != nil {
 			log.Fatalf("Failed to read message queue trigger list: %v", err)
 		}
