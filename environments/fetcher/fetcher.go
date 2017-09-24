@@ -16,8 +16,8 @@ import (
 
 	"github.com/mholt/archiver"
 	"github.com/satori/go.uuid"
-	"k8s.io/client-go/1.5/kubernetes"
-	"k8s.io/client-go/1.5/pkg/api"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 
 	"github.com/fission/fission"
 	"github.com/fission/fission/tpr"
@@ -27,11 +27,11 @@ type (
 	FetchRequestType int
 
 	FetchRequest struct {
-		FetchType     FetchRequestType `json:"fetchType"`
-		Function      api.ObjectMeta   `json:"function"`
-		Url           string           `json:"url"`
-		StorageSvcUrl string           `json:"storagesvcurl"`
-		Filename      string           `json:"filename"`
+		FetchType     FetchRequestType  `json:"fetchType"`
+		Function      metav1.ObjectMeta `json:"function"`
+		Url           string            `json:"url"`
+		StorageSvcUrl string            `json:"storagesvcurl"`
+		Filename      string            `json:"filename"`
 	}
 
 	Fetcher struct {

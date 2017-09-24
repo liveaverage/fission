@@ -31,7 +31,7 @@ import (
 	"github.com/dchest/uniuri"
 	"github.com/satori/go.uuid"
 	"github.com/urfave/cli"
-	"k8s.io/client-go/1.5/pkg/api"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/fission/fission"
 	"github.com/fission/fission/controller/client"
@@ -119,14 +119,14 @@ func fnCreate(c *cli.Context) error {
 	}
 
 	function := &tpr.Function{
-		Metadata: api.ObjectMeta{
+		Metadata: metav1.ObjectMeta{
 			Name:      fnName,
-			Namespace: api.NamespaceDefault,
+			Namespace: metav1.NamespaceDefault,
 		},
 		Spec: fission.FunctionSpec{
 			Environment: fission.EnvironmentReference{
 				Name:      envName,
-				Namespace: api.NamespaceDefault,
+				Namespace: metav1.NamespaceDefault,
 			},
 		},
 	}
@@ -140,9 +140,9 @@ func fnCreate(c *cli.Context) error {
 	}
 	pkgName := fmt.Sprintf("%v-%v", fnName, strings.ToLower(uniuri.NewLen(6)))
 	pkg := &tpr.Package{
-		Metadata: api.ObjectMeta{
+		Metadata: metav1.ObjectMeta{
 			Name:      pkgName,
-			Namespace: api.NamespaceDefault,
+			Namespace: metav1.NamespaceDefault,
 		},
 		Spec: pkgSpec,
 	}
@@ -172,9 +172,9 @@ func fnCreate(c *cli.Context) error {
 	}
 	triggerName := uuid.NewV4().String()
 	ht := &tpr.Httptrigger{
-		Metadata: api.ObjectMeta{
+		Metadata: metav1.ObjectMeta{
 			Name:      triggerName,
-			Namespace: api.NamespaceDefault,
+			Namespace: metav1.NamespaceDefault,
 		},
 		Spec: fission.HTTPTriggerSpec{
 			RelativeURL: triggerUrl,
@@ -199,14 +199,14 @@ func fnGet(c *cli.Context) error {
 	if len(fnName) == 0 {
 		fatal("Need name of function, use --name")
 	}
-	m := &api.ObjectMeta{
+	m := &metav1.ObjectMeta{
 		Name:      fnName,
-		Namespace: api.NamespaceDefault,
+		Namespace: metav1.NamespaceDefault,
 	}
 	fn, err := client.FunctionGet(m)
 	checkErr(err, "get function")
 
-	pkg, err := client.PackageGet(&api.ObjectMeta{
+	pkg, err := client.PackageGet(&metav1.ObjectMeta{
 		Name:      fn.Spec.Package.PackageRef.Name,
 		Namespace: fn.Spec.Package.PackageRef.Namespace,
 	})
@@ -224,9 +224,9 @@ func fnGetMeta(c *cli.Context) error {
 		fatal("Need name of function, use --name")
 	}
 
-	m := &api.ObjectMeta{
+	m := &metav1.ObjectMeta{
 		Name:      fnName,
-		Namespace: api.NamespaceDefault,
+		Namespace: metav1.NamespaceDefault,
 	}
 
 	f, err := client.FunctionGet(m)
@@ -248,9 +248,9 @@ func fnUpdate(c *cli.Context) error {
 		fatal("Need name of function, use --name")
 	}
 
-	function, err := client.FunctionGet(&api.ObjectMeta{
+	function, err := client.FunctionGet(&metav1.ObjectMeta{
 		Name:      fnName,
-		Namespace: api.NamespaceDefault,
+		Namespace: metav1.NamespaceDefault,
 	})
 	checkErr(err, fmt.Sprintf("read function '%v'", fnName))
 
@@ -267,7 +267,7 @@ func fnUpdate(c *cli.Context) error {
 
 	if len(deployPkgName) != 0 || len(srcPkgName) != 0 {
 		// get existing package
-		pkg, err := client.PackageGet(&api.ObjectMeta{
+		pkg, err := client.PackageGet(&metav1.ObjectMeta{
 			Name:      function.Spec.Package.PackageRef.Name,
 			Namespace: function.Spec.Package.PackageRef.Namespace,
 		})
@@ -306,9 +306,9 @@ func fnDelete(c *cli.Context) error {
 		fatal("Need name of function, use --name")
 	}
 
-	m := &api.ObjectMeta{
+	m := &metav1.ObjectMeta{
 		Name:      fnName,
-		Namespace: api.NamespaceDefault,
+		Namespace: metav1.NamespaceDefault,
 	}
 
 	err := client.FunctionDelete(m)
@@ -350,9 +350,9 @@ func fnLogs(c *cli.Context) error {
 	}
 
 	fnPod := c.String("pod")
-	m := &api.ObjectMeta{
+	m := &metav1.ObjectMeta{
 		Name:      fnName,
-		Namespace: api.NamespaceDefault,
+		Namespace: metav1.NamespaceDefault,
 	}
 
 	f, err := client.FunctionGet(m)
@@ -423,7 +423,7 @@ func fnPods(c *cli.Context) error {
 		dbType = logdb.INFLUXDB
 	}
 
-	m := &api.ObjectMeta{Name: fnName}
+	m := &metav1.ObjectMeta{Name: fnName}
 
 	f, err := client.FunctionGet(m)
 	checkErr(err, "get function")

@@ -20,8 +20,8 @@ import (
 	"log"
 	"time"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/pkg/api"
 
 	"github.com/fission/fission/tpr"
 )
@@ -142,7 +142,7 @@ func (gpm *GenericPoolManager) eagerPoolCreator() {
 		time.Sleep(pollSleep)
 
 		// get list of envs from controller
-		envs, err := gpm.fissionClient.Environments(api.NamespaceAll).List(api.ListOptions{})
+		envs, err := gpm.fissionClient.Environments(metav1.NamespaceAll).List(metav1.ListOptions{})
 		if err != nil {
 			log.Fatalf("Failed to get environment list: %v", err)
 		}
